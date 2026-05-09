@@ -1,5 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
-import { SOURCES, type Source } from "./sources";
+import { SOURCES, AI_KEYWORDS, type Source } from "./sources";
 
 export type Article = {
   id: string;
@@ -9,6 +9,7 @@ export type Article = {
   publishedAt: number;
   source: Source;
   score: number;
+  aiScore: number;
 };
 
 const parser = new XMLParser({
@@ -113,6 +114,7 @@ async function fetchFeed(source: Source): Promise<Article[]> {
           publishedAt: isNaN(ts) ? now : ts,
           source,
           score: 0,
+          aiScore: 0,
         } satisfies Article;
       })
       .filter((a) => a.title && a.link);
@@ -137,6 +139,17 @@ function scoreArticle(a: Article): number {
   return recency * 0.55 + rep * 0.3 + depth * 0.1 + kw;
 }
 
+function aiRelevance(a: Article): number {
+  const haystack = `${a.title} ${a.summary}`;
+  let kw = 0;
+  for (const { pattern, weight } of AI_KEYWORDS) {
+    if (pattern.test(haystack)) kw += weight;
+  }
+  // Native AI sources get a baseline boost so they always qualify.
+  if (a.source.category === "ai") kw += 1.5;
+  return kw;
+}
+
 export async function getArticles(): Promise<Article[]> {
   const all = await Promise.all(SOURCES.map(fetchFeed));
   const flat = all.flat();
@@ -148,9 +161,28 @@ export async function getArticles(): Promise<Article[]> {
     seen.add(key);
     return true;
   });
-  for (const a of unique) a.score = scoreArticle(a);
+  for (const a of unique) {
+    a.score = scoreArticle(a);
+    a.aiScore = aiRelevance(a);
+  }
   unique.sort((a, b) => b.score - a.score);
   return unique;
+}
+
+export function rankAiArticles(articles: Article[]): Article[] {
+  const ageHours = (ts: number) => Math.max(1, (Date.now() - ts) / 36e5);
+  // Slower decay for AI/business essays — ideas age more gracefully than
+  // breaking news, so use a 96-hour half-life.
+  return articles
+    .filter((a) => a.aiScore >= 0.6)
+    .map((a) => {
+      const recency = 1 / (1 + ageHours(a.publishedAt) / 96);
+      const rep = a.source.reputation / 10;
+      const composite = a.aiScore * 0.5 + rep * 0.3 + recency * 0.2;
+      return { a, composite };
+    })
+    .sort((x, y) => y.composite - x.composite)
+    .map((x) => x.a);
 }
 
 export function timeAgo(ts: number): string {

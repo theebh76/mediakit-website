@@ -3,7 +3,7 @@ export type Source = {
   name: string;
   url: string;
   feed: string;
-  category: "security" | "tech";
+  category: "security" | "tech" | "ai";
   // 1-10. Weights ranking. Based on editorial track record, depth, originality.
   reputation: number;
 };
@@ -21,4 +21,30 @@ export const SOURCES: Source[] = [
   { id: "verge", name: "The Verge", url: "https://www.theverge.com", feed: "https://www.theverge.com/rss/index.xml", category: "tech", reputation: 7 },
   { id: "techcrunch", name: "TechCrunch", url: "https://techcrunch.com", feed: "https://techcrunch.com/feed/", category: "tech", reputation: 7 },
   { id: "cisa", name: "CISA Advisories", url: "https://www.cisa.gov", feed: "https://www.cisa.gov/cybersecurity-advisories/all.xml", category: "security", reputation: 10 },
+
+  // AI — applied AI for business, technology, and engineering
+  { id: "mittr", name: "MIT Technology Review", url: "https://www.technologyreview.com", feed: "https://www.technologyreview.com/feed/", category: "ai", reputation: 9 },
+  { id: "hbr", name: "Harvard Business Review", url: "https://hbr.org", feed: "https://hbr.org/the-latest/feed", category: "ai", reputation: 9 },
+  { id: "a16z", name: "Andreessen Horowitz", url: "https://a16z.com", feed: "https://a16z.com/feed/", category: "ai", reputation: 8 },
+  { id: "stratechery", name: "Stratechery", url: "https://stratechery.com", feed: "https://stratechery.com/feed/", category: "ai", reputation: 9 },
+  { id: "simonw", name: "Simon Willison's Weblog", url: "https://simonwillison.net", feed: "https://simonwillison.net/atom/everything/", category: "ai", reputation: 9 },
+  { id: "latent", name: "Latent Space", url: "https://www.latent.space", feed: "https://www.latent.space/feed", category: "ai", reputation: 8 },
+  { id: "anthropic", name: "Anthropic News", url: "https://www.anthropic.com/news", feed: "https://www.anthropic.com/news/rss.xml", category: "ai", reputation: 9 },
+  { id: "openai", name: "OpenAI", url: "https://openai.com/news/", feed: "https://openai.com/news/rss.xml", category: "ai", reputation: 8 },
+  { id: "googleai", name: "Google Research Blog", url: "https://research.google/blog/", feed: "https://research.google/blog/rss/", category: "ai", reputation: 8 },
+  { id: "huggingface", name: "Hugging Face Blog", url: "https://huggingface.co/blog", feed: "https://huggingface.co/blog/feed.xml", category: "ai", reputation: 7 },
+  { id: "vbai", name: "VentureBeat AI", url: "https://venturebeat.com/category/ai/", feed: "https://venturebeat.com/category/ai/feed/", category: "ai", reputation: 7 },
+];
+
+// Keywords used to *promote* AI-relevant articles from non-AI sources into
+// the AI section. Tuned for applied AI in business/tech: client research,
+// value proposition, operational efficiency, and AI-assisted/vibe coding.
+export const AI_KEYWORDS: { pattern: RegExp; weight: number }[] = [
+  { pattern: /\b(generative ai|genai|llm|large language model|foundation model|frontier model|gpt-?\d|claude|gemini|mistral|llama)\b/i, weight: 1.0 },
+  { pattern: /\b(ai agent|agentic|autonomous agent|multi[- ]agent|tool use|copilot|assistant)\b/i, weight: 0.9 },
+  { pattern: /\b(rag|retrieval[- ]augmented|vector (db|database|store)|embeddings?|fine[- ]tun(e|ing)|prompt engineering)\b/i, weight: 0.7 },
+  { pattern: /\b(vibe cod(e|ing)|ai[- ]assisted (coding|development)|cursor|windsurf|claude code|github copilot|codegen)\b/i, weight: 1.0 },
+  { pattern: /\b(productivity|operational efficiency|automation|workflow|back[- ]office|cost reduction|roi|deploy(ed|ing)?)\b.*\b(ai|llm|model)\b/i, weight: 0.6 },
+  { pattern: /\b(ai|llm).*\b(productivity|efficiency|automation|workflow|back[- ]office|cost|roi|enterprise|business case|customer|client|sales|marketing|research)\b/i, weight: 0.6 },
+  { pattern: /\b(value proposition|go[- ]to[- ]market|customer research|market research|product[- ]market fit)\b/i, weight: 0.5 },
 ];

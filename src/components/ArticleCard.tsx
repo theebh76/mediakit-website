@@ -24,7 +24,7 @@ export function ArticleCard({ a, variant = "small" }: { a: Article; variant?: Va
       onMouseLeave={() => setHover(false)}
     >
       <div className="flex items-center gap-2 mb-1.5">
-        <span className="kicker">{a.source.category === "security" ? "Cybersecurity" : "Technology"}</span>
+        <span className="kicker">{categoryLabel(a.source.category)}</span>
         <span className="meta">·</span>
         <span className="meta">{a.source.name}</span>
         {read && (
@@ -85,6 +85,12 @@ export function ArticleCard({ a, variant = "small" }: { a: Article; variant?: Va
       </div>
     </article>
   );
+}
+
+function categoryLabel(c: Article["source"]["category"]): string {
+  if (c === "security") return "Cybersecurity";
+  if (c === "ai") return "AI";
+  return "Technology";
 }
 
 function Heading({ variant, children }: { variant: Variant; children: React.ReactNode }) {
