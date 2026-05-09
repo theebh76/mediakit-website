@@ -1,59 +1,8 @@
-import { getArticles, timeAgo, type Article } from "@/lib/feed";
+import { getArticles } from "@/lib/feed";
+import { ArticleCard } from "@/components/ArticleCard";
+import { ReadControls } from "@/components/ReadControls";
 
 export const revalidate = 600;
-
-function Lead({ a }: { a: Article }) {
-  return (
-    <article className="border-b rule pb-6 md:pb-8">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="kicker">{a.source.category === "security" ? "Cybersecurity" : "Technology"}</span>
-        <span className="meta">·</span>
-        <span className="meta">{a.source.name}</span>
-      </div>
-      <h1 className="headline text-3xl sm:text-4xl md:text-5xl font-bold mb-3">
-        <a href={a.link} target="_blank" rel="noopener noreferrer">
-          {a.title}
-        </a>
-      </h1>
-      {a.summary && (
-        <p className="summary text-base md:text-lg max-w-3xl mb-3">{a.summary}</p>
-      )}
-      <div className="meta flex items-center gap-3">
-        <span>{timeAgo(a.publishedAt)}</span>
-        <span>·</span>
-        <span>Reputation {a.source.reputation}/10</span>
-      </div>
-    </article>
-  );
-}
-
-function Card({ a, big = false }: { a: Article; big?: boolean }) {
-  return (
-    <article className="border-b rule py-5">
-      <div className="flex items-center gap-2 mb-1.5">
-        <span className="kicker">{a.source.category === "security" ? "Cybersecurity" : "Technology"}</span>
-        <span className="meta">·</span>
-        <span className="meta">{a.source.name}</span>
-      </div>
-      <h2 className={`headline font-bold mb-2 ${big ? "text-2xl md:text-3xl" : "text-lg md:text-xl"}`}>
-        <a href={a.link} target="_blank" rel="noopener noreferrer">
-          {a.title}
-        </a>
-      </h2>
-      {a.summary && big && (
-        <p className="summary text-base mb-2 line-clamp-3">{a.summary}</p>
-      )}
-      {a.summary && !big && (
-        <p className="summary text-sm mb-2 line-clamp-2">{a.summary}</p>
-      )}
-      <div className="meta flex items-center gap-2">
-        <span>{timeAgo(a.publishedAt)}</span>
-        <span>·</span>
-        <span>Rep {a.source.reputation}/10</span>
-      </div>
-    </article>
-  );
-}
 
 export default async function Home() {
   const articles = await getArticles();
@@ -74,9 +23,12 @@ export default async function Home() {
     <div className="min-h-screen">
       <header className="border-b rule">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between py-3 meta">
+          <div className="flex items-center justify-between py-3 meta gap-3">
             <span>{today}</span>
-            <span className="hidden sm:inline">Tech &amp; Cybersecurity, ranked by reputation</span>
+            <div className="flex items-center gap-4">
+              <ReadControls />
+              <span className="hidden sm:inline">Tech &amp; Cybersecurity, ranked by reputation</span>
+            </div>
           </div>
           <div className="text-center py-4 md:py-6">
             <h1 className="masthead-title text-4xl md:text-6xl">Mediakit</h1>
@@ -92,22 +44,20 @@ export default async function Home() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
-        {!lead && (
-          <p className="meta">Loading the latest reporting…</p>
-        )}
+        {!lead && <p className="meta">Loading the latest reporting…</p>}
         <section id="top" className="grid md:grid-cols-3 gap-6 md:gap-10">
           <div className="md:col-span-2">
-            {lead && <Lead a={lead} />}
+            {lead && <ArticleCard a={lead} variant="lead" />}
             <div className="grid sm:grid-cols-2 gap-x-8">
               {sub.slice(0, 2).map((a) => (
-                <Card key={a.id} a={a} big />
+                <ArticleCard key={a.id} a={a} variant="big" />
               ))}
             </div>
           </div>
           <aside className="md:border-l md:pl-8 rule">
             <h3 className="kicker mb-3">The Briefing</h3>
             {sub.slice(2).map((a) => (
-              <Card key={a.id} a={a} />
+              <ArticleCard key={a.id} a={a} />
             ))}
           </aside>
         </section>
@@ -119,7 +69,7 @@ export default async function Home() {
           </div>
           <div className="grid md:grid-cols-2 gap-x-10">
             {security.map((a) => (
-              <Card key={a.id} a={a} />
+              <ArticleCard key={a.id} a={a} />
             ))}
           </div>
         </section>
@@ -131,7 +81,7 @@ export default async function Home() {
           </div>
           <div className="grid md:grid-cols-2 gap-x-10">
             {tech.map((a) => (
-              <Card key={a.id} a={a} />
+              <ArticleCard key={a.id} a={a} />
             ))}
           </div>
         </section>
@@ -142,7 +92,7 @@ export default async function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-x-8">
             {rest.map((a) => (
-              <Card key={a.id} a={a} />
+              <ArticleCard key={a.id} a={a} />
             ))}
           </div>
         </section>
@@ -157,7 +107,7 @@ export default async function Home() {
               technology and cybersecurity publications. Articles are ranked by
               source reputation, recency, and editorial depth. Copyright belongs
               to the original publishers — click any headline to read on the
-              source.
+              source. Read articles are remembered on this device only.
             </p>
           </div>
           <div>
