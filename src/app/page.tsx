@@ -1,6 +1,7 @@
 import { getArticles, rankAiArticles } from "@/lib/feed";
 import { ArticleCard } from "@/components/ArticleCard";
 import { ReadControls } from "@/components/ReadControls";
+import { CreditsWidget } from "@/components/CreditsWidget";
 
 export const revalidate = 600;
 
@@ -30,6 +31,9 @@ export default async function Home() {
               <ReadControls />
               <span className="hidden sm:inline">Tech &amp; Cybersecurity, ranked by reputation</span>
             </div>
+          </div>
+          <div className="py-3">
+            <CreditsWidget />
           </div>
           <div className="text-center py-4 md:py-6">
             <h1 className="masthead-title text-4xl md:text-6xl">Mediakit</h1>
