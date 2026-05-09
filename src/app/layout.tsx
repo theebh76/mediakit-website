@@ -18,6 +18,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <base target="_blank" />
+      </head>
       <body className="bg-paper text-ink">{children}</body>
     </html>
   );

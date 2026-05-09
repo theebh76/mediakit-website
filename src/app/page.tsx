@@ -35,10 +35,10 @@ export default async function Home() {
             <p className="meta mt-1 italic">Substantive technology and cybersecurity reporting</p>
           </div>
           <nav className="flex items-center justify-center gap-6 py-3 text-sm border-t rule overflow-x-auto whitespace-nowrap">
-            <a href="#top" className="hover:text-accent">Top Stories</a>
-            <a href="#security" className="hover:text-accent">Cybersecurity</a>
-            <a href="#tech" className="hover:text-accent">Technology</a>
-            <a href="#latest" className="hover:text-accent">Latest</a>
+            <a href="#top" target="_self" className="hover:text-accent">Top Stories</a>
+            <a href="#security" target="_self" className="hover:text-accent">Cybersecurity</a>
+            <a href="#tech" target="_self" className="hover:text-accent">Technology</a>
+            <a href="#latest" target="_self" className="hover:text-accent">Latest</a>
           </nav>
         </div>
       </header>
