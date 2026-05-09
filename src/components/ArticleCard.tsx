@@ -36,9 +36,8 @@ export function ArticleCard({ a, variant = "small" }: { a: Article; variant?: Va
       </div>
       <Heading variant={variant}>
         <a
-          href={a.link}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={`/read?u=${encodeURIComponent(a.link)}`}
+          target="_self"
           onClick={() => markRead(a.link)}
           onAuxClick={() => markRead(a.link)}
           onContextMenu={() => markRead(a.link)}
